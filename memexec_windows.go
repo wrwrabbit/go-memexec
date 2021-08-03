@@ -2,4 +2,4 @@
 
 package memexec
 
-const tempPattern = "go-memexec-*.exe"
+const tempPattern = "mexec-"
