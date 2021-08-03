@@ -2,4 +2,4 @@
 
 package memexec
 
-const tempPattern = "mexec-"
+const tempPattern = "mexec-*.exe"
