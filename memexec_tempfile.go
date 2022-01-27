@@ -76,7 +76,8 @@ func DirectTempFile(dir, filename string) (f *os.File, err error) {
 		dir = os.TempDir()
 	}
 
-	return os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0600)
+	name := filepath.Join(dir, filename)
+	return os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0600)
 }
 
 var errPatternHasSeparator = errors.New("pattern contains path separator")
