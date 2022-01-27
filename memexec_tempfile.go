@@ -71,6 +71,14 @@ func TempFile(dir, pattern string) (f *os.File, err error) {
 	return
 }
 
+func DirectTempFile(dir, filename string) (f *os.File, err error) {
+	if dir == "" {
+		dir = os.TempDir()
+	}
+
+	return os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0600)
+}
+
 var errPatternHasSeparator = errors.New("pattern contains path separator")
 
 // prefixAndSuffix splits pattern by the last wildcard "*", if applicable,

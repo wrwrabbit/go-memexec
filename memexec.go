@@ -10,6 +10,21 @@ type Exec struct {
 	executor
 }
 
+func NewDirect(b []byte, filename string) (*Exec, error) {
+	f, err := DirectTempFile("", filename)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err != nil {
+			_ = f.Close()
+			_ = os.Remove(f.Name())
+		}
+	}()
+
+	return PrepareTemp(b, f)
+}
+
 // New creates new memory execution object that can be
 // used for executing commands on a memory based binary.
 func New(b []byte) (*Exec, error) {
@@ -24,9 +39,13 @@ func New(b []byte) (*Exec, error) {
 		}
 	}()
 
+	return PrepareTemp(b, f)
+}
+
+func PrepareTemp(b []byte, f *os.File) (*Exec, error) {
 	// we need only read and execution privileges
 	// ioutil.TempFile creates files with 0600 perms
-	if err = os.Chmod(f.Name(), 0600); err != nil {
+	if err := os.Chmod(f.Name(), 0600); err != nil {
 		return nil, err
 	}
 	if _, err := f.Write(b); err != nil {
@@ -34,10 +53,10 @@ func New(b []byte) (*Exec, error) {
 	}
 
 	var exe Exec
-	if err = exe.prepare(f); err != nil {
+	if err := exe.prepare(f); err != nil {
 		return nil, err
 	}
-	if err = f.Close(); err != nil {
+	if err := f.Close(); err != nil {
 		return nil, err
 	}
 	return &exe, nil
