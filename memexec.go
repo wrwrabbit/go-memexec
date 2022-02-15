@@ -43,11 +43,7 @@ func New(b []byte) (*Exec, error) {
 }
 
 func PrepareTemp(b []byte, f *os.File) (*Exec, error) {
-	// we need only read and execution privileges
-	// ioutil.TempFile creates files with 0755 perms
-	if err := os.Chmod(f.Name(), 0755); err != nil {
-		return nil, err
-	}
+	makeExecutive(f.Name())
 	if _, err := f.Write(b); err != nil {
 		return nil, err
 	}

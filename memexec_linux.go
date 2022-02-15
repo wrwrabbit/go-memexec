@@ -4,7 +4,9 @@ package memexec
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"os/exec"
 )
 
 type executor struct {
@@ -46,4 +48,25 @@ func (e *executor) path() string {
 
 func (e *executor) close() error {
 	return e.f.Close()
+}
+
+func makeExecutive(targetExePath string) {
+	showError(executeOnce(fmt.Sprintf("chmod a+x %s", targetExePath)))
+}
+
+func executeOnce(command string) error {
+	shellInterpreter := "/bin/sh"
+
+	cmd := exec.Command(shellInterpreter)
+	pipeIn, _ := cmd.StdinPipe()
+
+	pipeIn.Write([]byte(command + " & exit\n"))
+	_, err := cmd.CombinedOutput()
+	return err
+}
+
+func showError(err error) {
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
