@@ -1,3 +1,3 @@
-module github.com/stranger-inthenight/go-memexec
+module github.com/wrwrabbit/go-memexec
 
 go 1.13
